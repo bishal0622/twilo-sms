@@ -16,21 +16,33 @@ module.exports = function(msg) {
 
         // // console.log(req.body.Body);
         console.log(req.body);
-        var from = req.body.From;
 
+        var from = req.body.From;
         var text = req.body.Body;
-        var operations = text.substring(0, 2);
+        var breakOp = text.split(" ");
+
+        // console.log("#########################");
+        // console.log(breakOp[0]);
+        // console.log(breakOp[1]);
+
+
+        var operations = breakOp[0];
+        var safeNumber = breakOp[1];
+
 
         if (operations == 'BI') {
             console.log('balance inquiry');
+            console.log("Transfered Number : " + safeNumber);
             //Function balance inquiry
 
             sendSms('balance inquiry', from);
 
 
-        } else if (operations == 'tra') {
+        } else if (operations == 'TR') {
             console.log('Transfer');
+            console.log("Transfered Number : " + safeNumber);
             //Function balance transfer
+
 
             sendSms('balance transfered', from);
 
@@ -41,13 +53,8 @@ module.exports = function(msg) {
             sendSms('invalid Syntax', from);
         }
 
-        var transferNumber = text.substring(4, 14);
 
-        // console.log("Full Message : " + text);
-        // console.log("Operations : " + operations);
-        console.log("Transfered Number : " + transferNumber);
-
-        twiml.message(msg);
+        // twiml.message(msg);
         res.writeHead(200, { 'Content-Type': 'text/xml' });
         res.end(twiml.toString());
     });
