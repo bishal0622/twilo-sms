@@ -4,45 +4,39 @@ module.exports = function(msg) {
     var twilio = require('twilio');
     var bodyParser = require('body-parser');
     var sendSms = require('./send-sms');
-
+    var checkSyntax = require('./checkSyntax');
+    var splitBody = require('./splitBody');
 
     var app = express();
     app.use(bodyParser.urlencoded({ extended: false }));
 
-
+    //post sms to server
     app.post('/sms', function(req, res) {
         var twilio = require('twilio');
         var twiml = new twilio.TwimlResponse();
 
-        // // console.log(req.body.Body);
+        // console.log(req.body.Body);
         console.log(req.body);
+        //splitting the body part
+        var splitting = splitBody(req.body.Body);
 
+        //Phone number sms is sent from
         var from = req.body.From;
-        var text = req.body.Body;
-        var breakOp = text.split(" ");
 
-        // console.log("#########################");
-        // console.log(breakOp[0]);
-        // console.log(breakOp[1]);
+        //checking syntax
+        var index = checkSyntax(req.body.Body);
 
-
-        var operations = breakOp[0];
-        var safeNumber = breakOp[1];
-
-
-        if (operations == 'BI') {
+        if (index == 0) {
             console.log('balance inquiry');
-            console.log("Transfered Number : " + safeNumber);
+            console.log("Transfered Number : " + splitting[1]);
             //Function balance inquiry
 
             sendSms('balance inquiry', from);
 
-
-        } else if (operations == 'TR') {
+        } else if (index == 1) {
             console.log('Transfer');
-            console.log("Transfered Number : " + safeNumber);
+            console.log("Transfered Number : " + splitting[1]);
             //Function balance transfer
-
 
             sendSms('balance transfered', from);
 
@@ -52,7 +46,6 @@ module.exports = function(msg) {
 
             sendSms('invalid Syntax', from);
         }
-
 
         // twiml.message(msg);
         res.writeHead(200, { 'Content-Type': 'text/xml' });

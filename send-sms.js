@@ -14,6 +14,6 @@ module.exports = function(replyMsg, phoneTo) {
         from: "+18642142077",
         body: replyMsg
     }, function(err, message) {
-        console.log(message.sid);
+        // console.log(message.sid);
     });
 }
