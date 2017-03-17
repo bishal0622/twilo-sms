@@ -3,11 +3,16 @@ module.exports = function(msg) {
     var express = require('express');
     var twilio = require('twilio');
     var bodyParser = require('body-parser');
+
     var sendSms = require('./send-sms');
     var checkSyntax = require('./checkSyntax');
     var splitBody = require('./splitBody');
+    var apiCheck = require('./apiCheck');
 
     var app = express();
+
+    // var flag = false;
+
     app.use(bodyParser.urlencoded({ extended: false }));
 
     //post sms to server
@@ -26,25 +31,26 @@ module.exports = function(msg) {
         //checking syntax
         var index = checkSyntax(req.body.Body);
 
+        //index 0 to balance inquiry after checkSyntax
         if (index == 0) {
             console.log('balance inquiry');
-            console.log("Transfered Number : " + splitting[1]);
             //Function balance inquiry
-
-            sendSms('balance inquiry', from);
+            apiCheck(from, req.body.Body);
+            // sendSms('balance inquiry', from);
 
         } else if (index == 1) {
+            //index 1 to balance transfer after checkSyntax
             console.log('Transfer');
             console.log("Transfered Number : " + splitting[1]);
             //Function balance transfer
-
-            sendSms('balance transfered', from);
+            // flag = apiCheck(app, from, req.body.Body);
+            // sendSms('balance transfered', from);
 
         } else {
             console.log("invalid syntax");
             //Function error
 
-            sendSms('invalid Syntax', from);
+            // sendSms('invalid Syntax', from);
         }
 
         // twiml.message(msg);
